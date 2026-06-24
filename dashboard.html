@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spongebob Uncopylocked — Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0a0b0f;
+    --panel: #12141a;
+    --panel-hover: #161922;
+    --line: #232631;
+    --text: #e8e9ed;
+    --text-dim: #6b6f80;
+    --accent: #ffd83d;
+    --accent-dim: #3a3318;
+    --danger: #fb7185;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: linear-gradient(180deg, #0a1f3d 0%, #0d2847 30%, #0a1f3d 70%, #051320 100%);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  .bubble {
+    position: fixed;
+    bottom: -10%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.45), rgba(173,230,255,0.08));
+    border: 1px solid rgba(255,255,255,0.15);
+    animation: rise linear infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @keyframes rise {
+    0% { transform: translateY(0) translateX(0); opacity: 0; }
+    10% { opacity: 0.5; }
+    90% { opacity: 0.3; }
+    100% { transform: translateY(-110vh) translateX(var(--drift, 20px)); opacity: 0; }
+  }
+
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(173,230,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(173,230,255,0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    z-index: -1;
+  }
+
+  header, main { position: relative; z-index: 1; }
+
+  header {
+    border-bottom: 1px solid rgba(255, 216, 61, 0.15);
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(10, 11, 15, 0.3);
+    backdrop-filter: blur(6px);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  .brand .dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .logout-btn {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--text-dim);
+    border-radius: 7px;
+    padding: 7px 14px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .logout-btn:hover { border-color: var(--danger); color: var(--danger); }
+
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+  }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-sub {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-bottom: 2.5rem;
+  }
+
+  .file-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 1.5rem;
+    background: rgba(18, 20, 26, 0.75);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 216, 61, 0.12);
+    border-radius: 14px;
+    margin-bottom: 14px;
+    transition: all 0.2s ease;
+  }
+  .file-card:hover {
+    background: rgba(22, 25, 34, 0.85);
+    border-color: rgba(255, 216, 61, 0.3);
+  }
+
+  .file-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  .file-icon {
+    width: 48px; height: 48px;
+    background: var(--accent-dim);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .file-meta { min-width: 0; }
+
+  .file-name {
+    font-size: 16px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .file-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  .download-btn {
+    background: var(--accent);
+    color: #1a1400;
+    border: none;
+    border-radius: 8px;
+    padding: 11px 20px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    text-decoration: none;
+    transition: filter 0.15s ease, transform 0.1s ease;
+  }
+  .download-btn:hover { filter: brightness(1.08); }
+  .download-btn:active { transform: scale(0.97); }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-dim);
+    font-size: 14px;
+  }
+
+  .loading-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-dim);
+    font-size: 14px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div id="bubbleField"></div>
+
+<header>
+  <div class="brand"><span style="font-size:18px;">🧽</span> Spongebob Uncopylocked</div>
+  <div class="user-info">
+    <span id="usernameDisplay">...</span>
+    <button class="logout-btn" id="logoutBtn">Log out</button>
+  </div>
+</header>
+
+<main>
+  <div class="eyebrow">Available Files</div>
+  <h1>Your Downloads</h1>
+  <p class="page-sub">Files made available to verified accounts.</p>
+
+  <div id="filesList" class="loading-state">Loading files...</div>
+</main>
+
+<script>
+  fetch('/api/me').then(r => r.json()).then(data => {
+    if (!data.loggedIn) { window.location.href = '/login'; return; }
+    document.getElementById('usernameDisplay').textContent = data.username;
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await fetch('/api/logout', { method: 'POST' });
+    window.location.href = '/login';
+  });
+
+  function formatSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  async function loadFiles() {
+    const res = await fetch('/api/staticfiles');
+    const data = await res.json();
+    const list = document.getElementById('filesList');
+
+    if (!data.files || data.files.length === 0) {
+      list.innerHTML = '<div class="empty-state">No files available right now.</div>';
+      return;
+    }
+
+    list.innerHTML = data.files.map(f => `
+      <div class="file-card">
+        <div class="file-info">
+          <div class="file-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="#ffd83d" stroke-width="1.5"/>
+              <path d="M14 2v6h6" stroke="#ffd83d" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="file-meta">
+            <div class="file-name">${f.name}</div>
+            <div class="file-sub">${formatSize(f.size)}</div>
+          </div>
+        </div>
+        <a class="download-btn" href="/download/${f.id}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 16V4M12 4 7 9M12 4l5 5M5 20h14" stroke="#1a1400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Download
+        </a>
+      </div>
+    `).join('');
+  }
+
+  loadFiles();
+</script>
+
+<script>
+  const bubbleField = document.getElementById('bubbleField');
+  for (let i = 0; i < 18; i++) {
+    const b = document.createElement('div');
+    b.className = 'bubble';
+    const size = Math.random() * 20 + 6;
+    b.style.width = size + 'px';
+    b.style.height = size + 'px';
+    b.style.left = Math.random() * 100 + 'vw';
+    b.style.animationDuration = (Math.random() * 12 + 10) + 's';
+    b.style.animationDelay = (Math.random() * 12) + 's';
+    b.style.setProperty('--drift', (Math.random() * 60 - 30) + 'px');
+    bubbleField.appendChild(b);
+  }
+</script>
+
+</body>
+</html>
